@@ -24,12 +24,14 @@ public class HelloWorldController {
 
 	 @PostMapping("/put")
     public CommandResponse put(@RequestParam(value = "key") String key, @RequestParam(value = "value") String value) {
+		System.out.println("putting value "+key+":"+value);
         retrieveMap().put(key, value);
         return new CommandResponse(value);
     }
 
     @GetMapping("/get")
     public CommandResponse get(@RequestParam(value = "key") String key) {
+				System.out.println("retrieving value for "+key);
         String value = retrieveMap().get(key);
         return new CommandResponse(value);
     }
