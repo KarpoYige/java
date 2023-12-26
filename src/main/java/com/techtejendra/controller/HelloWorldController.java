@@ -1,5 +1,6 @@
 package com.techtejendra.controller;
 
+import java.io.IOException;
 import java.util.concurrent.ConcurrentMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +10,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.reflect.TypeToken;
 import com.hazelcast.core.HazelcastInstance;
 import com.techtejendra.property.GetTimestamp;
+
+import io.kubernetes.client.openapi.ApiClient;
+import io.kubernetes.client.openapi.ApiException;
+import io.kubernetes.client.openapi.Configuration;
+import io.kubernetes.client.openapi.apis.CoreV1Api;
+import io.kubernetes.client.openapi.models.V1Namespace;
+import io.kubernetes.client.openapi.models.V1Pod;
+import io.kubernetes.client.openapi.models.V1PodList;
+import io.kubernetes.client.util.Config;
+import io.kubernetes.client.util.Watch;
 
 @RestController
 public class HelloWorldController {
@@ -64,6 +76,35 @@ public class HelloWorldController {
 		output = output + "</center>";
 
 		return output;
+	}
+
+
+	@RequestMapping("/call-nodes")
+	public String callNodes() {
+
+	  ApiClient client;
+	try {
+		client = Config.defaultClient();
+		 Configuration.setDefaultApiClient(client);
+	
+       
+
+        CoreV1Api api = new CoreV1Api();
+        V1PodList list = api.listPodForAllNamespaces(null, null, null, null, null, null, null, null, null,false);
+        for (V1Pod item : list.getItems()) {
+            System.out.println(item.getSpec().getHostname());
+        }
+
+		} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+		} catch (ApiException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    
+		
+		return "hi";
 	}
 
 }
