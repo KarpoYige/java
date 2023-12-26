@@ -101,6 +101,7 @@ public class HelloWorldController {
 		} catch (ApiException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			System.out.println(e.getResponseBody());
 		}
     
 		
