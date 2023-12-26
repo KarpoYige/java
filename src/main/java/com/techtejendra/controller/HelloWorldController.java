@@ -90,7 +90,8 @@ public class HelloWorldController {
        
 
         CoreV1Api api = new CoreV1Api();
-        V1PodList list = api.listPodForAllNamespaces(null, null, null, null, null, null, null, null, null,false);
+		
+        V1PodList list = api.listNamespacedPod("noryak-dev", null, null, null, null, null, null, null, null, null, null)
         for (V1Pod item : list.getItems()) {
             System.out.println(item.getSpec().getHostname());
         }
