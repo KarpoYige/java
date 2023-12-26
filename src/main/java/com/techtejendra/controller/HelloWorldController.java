@@ -96,7 +96,8 @@ public class HelloWorldController {
 		
         V1PodList list = api.listNamespacedPod("noryak-dev", null, null, null, null, null, null, null, null, null, null);
         for (V1Pod item : list.getItems()) {
-            System.out.println(item.getStatus().getPodIP());
+			  System.out.println(item);
+			   System.out.println("===============================================");
         }
 
 		} catch (IOException e) {
