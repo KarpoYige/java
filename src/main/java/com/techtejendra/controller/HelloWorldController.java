@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.util.concurrent.ConcurrentMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import com.google.gson.reflect.TypeToken;
 import com.hazelcast.core.HazelcastInstance;
@@ -82,6 +84,10 @@ public class HelloWorldController {
 	@RequestMapping("/call-nodes")
 	public String callNodes() {
 
+		RestTemplate restTemplate = new RestTemplate();
+
+			String fooResourceUrl= ":8080/restcall";
+
 	  ApiClient client;
 	try {
 		client = Config.defaultClient();
@@ -97,7 +103,10 @@ public class HelloWorldController {
         V1PodList list = api.listNamespacedPod("noryak-dev", null, null, null, null, null, null, null, null, null, null);
         for (V1Pod item : list.getItems()) {
 			  if("Running".equalsIgnoreCase(item.getStatus().getPhase())){
-				System.out.println(item.getStatus().getPodIP());
+
+				ResponseEntity<String> response
+					= restTemplate.getForEntity("http://"+item.getStatus().getPodIP()+fooResourceUrl, String.class);
+				
 			  }
 			   System.out.println("===============================================");
         }
@@ -115,4 +124,10 @@ public class HelloWorldController {
 		return "hi";
 	}
 
+	@RequestMapping("/restcall")
+	public String restcall() {
+
+		System.out.println("got called");
+		return "yes";
+	}
 }
