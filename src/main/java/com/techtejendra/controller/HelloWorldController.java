@@ -36,19 +36,19 @@ public class HelloWorldController {
 		return hazelcastInstance.getMap("map");
 	}
 
-	 @PostMapping("/put")
-    public CommandResponse put(@RequestParam(value = "key") String key, @RequestParam(value = "value") String value) {
-		System.out.println("putting value "+key+":"+value);
-        retrieveMap().put(key, value);
-        return new CommandResponse(value);
-    }
+	@PostMapping("/put")
+	public CommandResponse put(@RequestParam(value = "key") String key, @RequestParam(value = "value") String value) {
+		System.out.println("putting value " + key + ":" + value);
+		retrieveMap().put(key, value);
+		return new CommandResponse(value);
+	}
 
-    @GetMapping("/get")
-    public CommandResponse get(@RequestParam(value = "key") String key) {
-				System.out.println("retrieving value for "+key);
-        String value = retrieveMap().get(key);
-        return new CommandResponse(value);
-    }
+	@GetMapping("/get")
+	public CommandResponse get(@RequestParam(value = "key") String key) {
+		System.out.println("retrieving value for " + key);
+		String value = retrieveMap().get(key);
+		return new CommandResponse(value);
+	}
 
 	@RequestMapping("/")
 	public String hello() {
@@ -80,54 +80,78 @@ public class HelloWorldController {
 		return output;
 	}
 
+	@RequestMapping("/get-nodes-info")
+	public String getNodesInfo() {
 
-	@RequestMapping("/call-nodes")
-	public String callNodes() {
-
-		RestTemplate restTemplate = new RestTemplate();
-
-			String fooResourceUrl= ":8080/restcall";
-
-	  ApiClient client;
-	try {
-		client = Config.defaultClient();
-		 Configuration.setDefaultApiClient(client);
-
-		 
-	
-       
-
-        CoreV1Api api = new CoreV1Api();
 		
-		
-        V1PodList list = api.listNamespacedPod("noryak-dev", null, null, null, null, null, null, null, null, null, null);
-        for (V1Pod item : list.getItems()) {
-			  if("Running".equalsIgnoreCase(item.getStatus().getPhase())){
 
-				ResponseEntity<String> response
-					= restTemplate.getForEntity("http://"+item.getStatus().getPodIP()+fooResourceUrl, String.class);
-				
-			  }
-			   System.out.println("===============================================");
-        }
+		ApiClient client;
+		try {
+			client = Config.defaultClient();
+			Configuration.setDefaultApiClient(client);
+
+			CoreV1Api api = new CoreV1Api();
+
+			V1PodList list = api.listNamespacedPod("noryak-dev", null, null, null, null, null, null, null, null, null,
+					null);
+			for (V1Pod item : list.getItems()) {
+				System.out.println(item);
+				System.out.println("===============================================");
+			}
 
 		} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} catch (ApiException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.out.println(e.getResponseBody());
 		}
-    
-		
-		return "hi";
+
+		return "getNodesInfo";
+	}
+
+	@RequestMapping("/call-each-nodes")
+	public String callEachNodes() {
+
+		RestTemplate restTemplate = new RestTemplate();
+
+		String fooResourceUrl = ":8080/restcall";
+
+		ApiClient client;
+		try {
+			client = Config.defaultClient();
+			Configuration.setDefaultApiClient(client);
+
+			CoreV1Api api = new CoreV1Api();
+
+			V1PodList list = api.listNamespacedPod("noryak-dev", null, null, null, null, null, null, null, null, null,
+					null);
+			for (V1Pod item : list.getItems()) {
+				if ("Running".equalsIgnoreCase(item.getStatus().getPhase())) {
+
+					ResponseEntity<String> response = restTemplate.getForEntity("http://" + item.getStatus().getPodIP() + fooResourceUrl, String.class);
+
+				}
+				System.out.println("===============================================");
+			}
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ApiException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println(e.getResponseBody());
+		}
+
+		return "callEachNodes";
 	}
 
 	@RequestMapping("/restcall")
 	public String restcall() {
 
 		System.out.println("got called");
-		return "yes";
+		return "restcall";
 	}
 }
