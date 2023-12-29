@@ -90,6 +90,8 @@ public class HelloWorldController {
 			client = Config.defaultClient();
 			Configuration.setDefaultApiClient(client);
 
+	Conf
+
 			CoreV1Api api = new CoreV1Api();
 
 			V1PodList list = api.listNamespacedPod("noryak-dev", null, null, null, null, null, null, null, null, null,
@@ -118,6 +120,8 @@ public class HelloWorldController {
 
 		String fooResourceUrl = ":8080/restcall";
 
+		String fs = "status.phase=Running";   
+
 		ApiClient client;
 		try {
 			client = Config.defaultClient();
@@ -125,14 +129,14 @@ public class HelloWorldController {
 
 			CoreV1Api api = new CoreV1Api();
 
-			V1PodList list = api.listNamespacedPod("noryak-dev", null, null, null, null, null, null, null, null, null,
+			V1PodList list = api.listNamespacedPod("noryak-dev", null, null, null, "status.phase=Running", "app=hello", null, null, null, null,
 					null);
 			for (V1Pod item : list.getItems()) {
-				if ("Running".equalsIgnoreCase(item.getStatus().getPhase())) {
-
+				
+					System.out.println("pod ip: "+item.getStatus().getPodIP());
 					ResponseEntity<String> response = restTemplate.getForEntity("http://" + item.getStatus().getPodIP() + fooResourceUrl, String.class);
 
-				}
+				
 				System.out.println("===============================================");
 			}
 
