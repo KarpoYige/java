@@ -90,7 +90,7 @@ public class HelloWorldController {
 			client = Config.defaultClient();
 			Configuration.setDefaultApiClient(client);
 
-	Conf
+
 
 			CoreV1Api api = new CoreV1Api();
 
